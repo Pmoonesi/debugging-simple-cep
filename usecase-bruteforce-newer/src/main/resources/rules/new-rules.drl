@@ -1,0 +1,121 @@
+package ir.sss.usecase.rules;
+rule "Attack 50113 - Level 1 - ID 0"
+when
+    $r: RequestEvent(pluginId == 4003, pluginSid == 1, considered == false)
+    $clock: PseudoClockScheduler(currentTime < $r.getTimestamp().getTime() + 100000)
+then
+    Scenario ns = new Scenario("50113", "AV Network scan, port scan detected against DST_IP");
+    String attackSourceIp = $r.getSource().getIp();
+	String attackSourcePort = $r.getSource().getPort();
+	Host attack_src = new Host(attackSourceIp, attackSourcePort);
+	String attackDestinationIp = $r.getDestination().getIp();
+	String attackDestinationPort = $r.getDestination().getPort();
+	Host attack_dst = new Host(attackDestinationIp, attackDestinationPort);
+	
+    Attack bfa = new Attack(50113, 0, ns, attack_src, attack_dst, $r.getTimestamp());
+    ArrayList<Event> eventsList = new ArrayList<>();
+    eventsList.add($r);
+    ns.addAttack(bfa);
+    insert(bfa);
+    insert(ns);
+end
+
+rule "Attack 50113 - Level 2 - ID 1"
+when
+    $scenario: Scenario(sid == 50113, rid == 0)
+    $prevLevel: Attack() from $scenario.lastAttack
+    Number(this >= 5) from accumulate(
+              $a : RequestEvent(sourceIp == $scenario.getAttack(0).sourceIp, pluginId == 4003, pluginSid == 1, this after[1ms, 100s] $prevLevel),
+              count($a)
+    )
+    $clock: PseudoClockScheduler()
+then
+    String attackSourceIp = $scenario.getAttack(0).getSourceIp();
+	String attackSourcePort = $prevLevel.getSource().getPort();
+	Host attack_src = new Host(attackSourceIp, attackSourcePort);
+	String attackDestinationIp = $prevLevel.getDestination().getIp();
+	String attackDestinationPort = $prevLevel.getDestination().getPort();
+	Host attack_dst = new Host(attackDestinationIp, attackDestinationPort);
+	
+    Attack bfa = new Attack(50113, 1, $scenario, attack_src, attack_dst, new Date($clock.getCurrentTime()));
+    insert(bfa);
+    $scenario.addAttack(bfa);
+    update($scenario);
+end
+
+rule "Attack 50113 - Level 3 - ID 2"
+when
+    $scenario: Scenario(sid == 50113, rid == 1)
+    $prevLevel: Attack() from $scenario.lastAttack
+    Number(this >= 100) from accumulate(
+              $a : RequestEvent(sourceIp == $scenario.getAttack(0).sourceIp, pluginId == 4003, pluginSid == 1, this after[1ms, 3600s] $prevLevel),
+              count($a)
+    )
+
+    $clock: PseudoClockScheduler()
+then
+    String attackSourceIp = $scenario.getAttack(0).getSourceIp();
+	String attackSourcePort = $prevLevel.getSource().getPort();
+	Host attack_src = new Host(attackSourceIp, attackSourcePort);
+	String attackDestinationIp = $prevLevel.getDestination().getIp();
+	String attackDestinationPort = $prevLevel.getDestination().getPort();
+	Host attack_dst = new Host(attackDestinationIp, attackDestinationPort);
+	
+    Attack bfa = new Attack(50113, 2, $scenario, attack_src, attack_dst, new Date($clock.getCurrentTime()));
+    insert(bfa);
+    $scenario.addAttack(bfa);
+    update($scenario);
+end
+
+rule "Attack 50113 - Level 4 - ID 3"
+when
+    $scenario: Scenario(sid == 50113, rid == 2)
+    $prevLevel: Attack() from $scenario.lastAttack
+    Number(this >= 1000) from accumulate(
+              $a : RequestEvent(sourceIp == $scenario.getAttack(0).sourceIp, pluginId == 4003, pluginSid == 1, this after[1ms, 36000s] $prevLevel),
+              count($a)
+    )
+
+    $clock: PseudoClockScheduler()
+then
+    String attackSourceIp = $scenario.getAttack(0).getSourceIp();
+	String attackSourcePort = $prevLevel.getSource().getPort();
+	Host attack_src = new Host(attackSourceIp, attackSourcePort);
+	String attackDestinationIp = $prevLevel.getDestination().getIp();
+	String attackDestinationPort = $prevLevel.getDestination().getPort();
+	Host attack_dst = new Host(attackDestinationIp, attackDestinationPort);
+	
+    Attack bfa = new Attack(50113, 3, $scenario, attack_src, attack_dst, new Date($clock.getCurrentTime()));
+    insert(bfa);
+    $scenario.addAttack(bfa);
+    update($scenario);
+end
+
+rule "Attack 50113 - Level 5 - ID 4"
+when
+    $scenario: Scenario(sid == 50113, rid == 3)
+    $prevLevel: Attack() from $scenario.lastAttack
+    Number(this >= 4000) from accumulate(
+              $a : RequestEvent(sourceIp == $scenario.getAttack(0).sourceIp, pluginId == 4003, pluginSid == 1, this after[1ms, 86400s] $prevLevel),
+              count($a)
+    )
+
+    $clock: PseudoClockScheduler()
+then
+    String attackSourceIp = $scenario.getAttack(0).getSourceIp();
+	String attackSourcePort = $prevLevel.getSource().getPort();
+	Host attack_src = new Host(attackSourceIp, attackSourcePort);
+	String attackDestinationIp = $prevLevel.getDestination().getIp();
+	String attackDestinationPort = $prevLevel.getDestination().getPort();
+	Host attack_dst = new Host(attackDestinationIp, attackDestinationPort);
+	
+    Attack bfa = new Attack(50113, 4, $scenario, attack_src, attack_dst, new Date($clock.getCurrentTime()));
+    insert(bfa);
+    $scenario.addAttack(bfa);
+    update($scenario);
+end
+
+
+
+
+

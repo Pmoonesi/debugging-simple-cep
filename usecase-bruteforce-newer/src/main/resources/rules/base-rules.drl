@@ -1,0 +1,116 @@
+package ir.sss.usecase.rules;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
+import ir.sss.model.Host;
+import ir.sss.model.RequestEvent;
+import ir.sss.model.Attack;
+import ir.sss.model.Scenario;
+import ir.sss.model.Event;
+import org.drools.time.SessionClock;
+import org.drools.time.SessionPseudoClock;
+import org.drools.core.time.impl.PseudoClockScheduler;
+import java.util.Date;
+import java.lang.Integer;
+
+declare RequestEvent
+    @role( event )
+    @timestamp( timestamp.getTime() )
+    @expires( 1d )
+end
+
+declare Attack
+    @role( event )
+    @timestamp( timestamp )
+    @expires( 1d )
+end
+
+declare Scenario
+    @role( fact )
+end
+
+declare PseudoClockScheduler
+    @role( fact )
+    @timestamp( getCurrentTime() )
+end
+
+declare Counter
+    value: int
+    @role( fact )
+end
+
+
+rule "init"
+when
+then
+    insert(new Counter(0));
+end
+
+
+rule "remove old attacks"
+    timer(int: 0 10m) // Fire every 10 minutes
+when
+    $clock: PseudoClockScheduler()
+    $events : List() from accumulate(
+            $event : Scenario(sid == 50113),
+            collectList($event)
+        )
+    $counter: Counter($v: value)
+then
+    int notDeleted = 0;
+    int deleted = 0;
+    for (Object o: $events) {
+        boolean isExpired = false;
+        Scenario scenario = (Scenario) o;
+        Attack lastAttack = scenario.getLastAttack();
+        long difference;
+        switch (scenario.getLevel()) {
+            case 1:
+                difference = 100;
+                break;
+            case 2:
+                difference = 3600;
+                break;
+            case 3:
+                difference = 36000;
+                break;
+            case 4:
+                difference = 86400;
+                break;
+            default:
+                difference = 0;
+        }
+        if (($clock.getCurrentTime() - lastAttack.getTimestamp().getTime()) > difference * 1000) {
+            isExpired = true;
+        }
+        if (isExpired) {
+            for (Attack attack: scenario.getAttackList()) {
+                try {
+                    if (attack != null) {
+                        retract(attack);
+                    }
+                    deleted += 1;
+                } catch (java.lang.NullPointerException s){
+                    // System.out.println(s);
+                    notDeleted += 1;
+                }
+            }
+            retract(scenario);
+            modify( $counter ){ setValue( $v + deleted) }
+        }
+    }
+
+end
+
+rule "we've found one"
+salience -1
+when
+    // Scenario(sid == 50113, level == 5)
+    Attack(sid == 50113, rid == 4)
+    $number: Number() from accumulate($f: Scenario(), count($f))
+    Counter($deleted: value)
+then
+    System.out.println("we've got one final scenario.");
+    System.out.println("This many scenarios left: " + $number);
+    System.out.println("This many scenarios deleted: " + $deleted);
+end

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kmodule xmlns="http://www.drools.org/xsd/kmodule">
+    <kbase name="defaultKieBase" default="true" equalsBehavior="equality" eventProcessingMode="stream" packages="rules">
+        <ksession name="defaultKieSession" default="true" type="stateful" clockType="pseudo"/>
+        <ksession name="testKieSession" type="stateful" clockType="pseudo"/>
+    </kbase>
+</kmodule>
