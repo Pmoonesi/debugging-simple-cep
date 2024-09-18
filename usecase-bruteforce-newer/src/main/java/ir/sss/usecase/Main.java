@@ -23,7 +23,7 @@ public class Main {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-    private static final String EVENTS_FILE_NAME = "logs.csv";
+    private static final String EVENTS_FILE_NAME = "logs-with-gc.csv";
 
     private static final HotSpotDiagnosticMXBean hotspotMBean =
             ManagementFactory.getPlatformMXBean(HotSpotDiagnosticMXBean.class);

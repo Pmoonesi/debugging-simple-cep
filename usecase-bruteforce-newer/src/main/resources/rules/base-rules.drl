@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import ir.sss.model.Host;
 import ir.sss.model.RequestEvent;
+import ir.sss.model.Signal;
 import ir.sss.model.Attack;
 import ir.sss.model.Scenario;
 import ir.sss.model.Event;
@@ -14,6 +15,12 @@ import java.util.Date;
 import java.lang.Integer;
 
 declare RequestEvent
+    @role( event )
+    @timestamp( timestamp.getTime() )
+    @expires( 1d )
+end
+
+declare Signal
     @role( event )
     @timestamp( timestamp.getTime() )
     @expires( 1d )
@@ -113,4 +120,12 @@ then
     System.out.println("we've got one final scenario.");
     System.out.println("This many scenarios left: " + $number);
     System.out.println("This many scenarios deleted: " + $deleted);
+end
+
+rule "do gc"
+when
+    Signal(type == Signal.Type.GC)
+then
+    // System.out.println("Signal came");
+    System.gc();
 end

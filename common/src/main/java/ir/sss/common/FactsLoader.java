@@ -3,6 +3,7 @@ package ir.sss.common;
 import ir.sss.model.Event;
 import ir.sss.model.Fact;
 import ir.sss.model.RequestEvent;
+import ir.sss.model.Signal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,16 +81,24 @@ public class FactsLoader {
 	 */
 	private static Event readEvent(String line) {
 		String[] eventData = line.split("\\|");
-		if (eventData.length != 7) {
+		if (!(eventData.length == 7 || eventData.length == 2)) {
 			LOGGER.error("Unable to parse string: " + line);
 		}
+
 		Event event = null;
+
+
+
 		try {
-			event = new RequestEvent(Integer.parseInt(eventData[0].trim()), Integer.parseInt(eventData[1].trim()), eventData[2].trim(), eventData[3].trim(), eventData[4].trim(), eventData[5].trim(), DATE_FORMAT.parse(eventData[6].trim()));
-			
+			if (line.startsWith("SIG")) {
+				event = new Signal(Signal.Type.GC, DATE_FORMAT.parse(eventData[1].trim()));
+			} else {
+				event = new RequestEvent(Integer.parseInt(eventData[0].trim()), Integer.parseInt(eventData[1].trim()), eventData[2].trim(), eventData[3].trim(), eventData[4].trim(), eventData[5].trim(), DATE_FORMAT.parse(eventData[6].trim()));
+			}
 		}  catch (ParseException pe) {
 			LOGGER.error("Error parsing line: " + line, pe);
 		}
+
 		return event;
 
 	}
