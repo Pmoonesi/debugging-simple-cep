@@ -73,34 +73,8 @@
         </dependency>
         <dependency>
             <groupId>org.drools</groupId>
-            <artifactId>knowledge-api</artifactId>
-            <version>6.5.0.Final</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
             <artifactId>drools-templates</artifactId>
             <version>${version.org.drools}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- jBPM 6 / BRMS dependencies. -->
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-bpmn2</artifactId>
-            <version>${version.org.jbpm}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-flow</artifactId>
-            <version>${version.org.jbpm}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-flow-builder</artifactId>
-            <version>${version.org.jbpm}</version>
             <scope>compile</scope>
         </dependency>
 

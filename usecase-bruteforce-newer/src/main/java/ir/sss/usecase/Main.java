@@ -10,7 +10,6 @@ import com.sun.management.HotSpotDiagnosticMXBean;
 import org.drools.core.time.impl.PseudoClockScheduler;
 import ir.sss.model.Event;
 import ir.sss.common.FactsLoader;
-import org.drools.time.SessionClock;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -68,7 +67,7 @@ public class Main {
         LOGGER.info("Finished Executing.");
 
         LOGGER.info("Getting Heap Dump.");
-        dumpHeap("dump.hprof", true);
+//        dumpHeap("dump.hprof", true);
     }
 
     /**
